@@ -1,5 +1,19 @@
 {
-    "title": "Local host",
-    "serverIp": "localhost",
-    "color": "green"
-}
+    "targets": [
+      {
+        "title": "AWS VM TH",
+        "serverIp": "43.208.190.238",
+        "color": "magenta"
+      },
+        {
+        "title": "AWS VM SG",
+        "serverIp": "52.221.238.113",
+        "color": "orange"
+      },
+        {
+            "title": "Azure VM SG",
+            "serverIp": "52.163.98.156",
+            "color": "blue"
+        }
+    ]
+  }

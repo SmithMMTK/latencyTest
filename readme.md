@@ -18,20 +18,31 @@ npm install
 node server.js
 ```
 
-
-# How to run client
-
+# How to run latency test
 Modify parameter file parameters.json or create new file
 
 parameter format
 
 ```json
 {
-    "title": "Local host",
-    "serverIp": "localhost",
-    "color": "green"
-}
-
+    "targets": [
+      {
+        "title": "AWS VM TH",
+        "serverIp": "43.208.190.238",
+        "color": "magenta"
+      },
+        {
+        "title": "AWS VM SG",
+        "serverIp": "52.221.238.113",
+        "color": "orange"
+      },
+        {
+            "title": "Azure VM SG",
+            "serverIp": "52.163.98.156",
+            "color": "blue"
+        }
+    ]
+  }
 ```
 
 ### color schema
@@ -53,6 +64,50 @@ const colorMap = {
 node client.js -p parameters.json
 ```
 
->Remark: if not -p specific client.js will load parameters from parameters.json
+>Remark: if not -p specific client.js will load parameters from parameter.json
+
+
+---
+
+# How to run latency and download speed test
+
+Modify parameter file parameter.json or create new file
+
+parameter format
+
+```json
+{
+    "title": "Local host",
+    "serverIp": "localhost",
+    "color": "green"
+}
+
+
+
+```
+
+### color schema
+```javascript
+const colorMap = {
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  orange: '\x1b[38;5;214m', // Orange color
+};
+```
+
+### Execution
+```bash
+node download_test.js -p parameters.json
+```
+
+>Remark: if not -p specific client.js will load parameters from parameter.json
+
+
+
 
 
