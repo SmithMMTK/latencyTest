@@ -102,7 +102,7 @@ const colorMap = {
 
 ### Execution
 ```bash
-node download_test.js
+node downloadTest.js
 ```
 
 >Remark: if not -p specific client.js will load parameters from parameter.json
