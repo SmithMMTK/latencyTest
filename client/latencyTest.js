@@ -40,67 +40,76 @@ const colorMap = {
   gray: '\x1b[90m',         // Gray for shadow/overlap
 };
 
+
 function drawLatencyChart(latencyData, maxHeight = 12, progress = 0) {
-  console.clear();
-  console.log('Latency Chart:');
-
-  const maxValue = Math.max(...latencyData.flatMap(data => data.latencies));
-  const scale = maxValue / maxHeight;
-
-  const chartRows = Array.from({ length: maxHeight }, () =>
-    Array(latencyData[0].latencies.length).fill(' ')
-  );
-
-  latencyData.forEach((targetData, targetIndex) => {
-    targetData.latencies.forEach((latency, timeIndex) => {
-      const scaledValue = Math.round(latency / scale);
-      for (let i = 0; i < scaledValue; i++) {
-        const row = maxHeight - i - 1;
-        if (chartRows[row][timeIndex] !== ' ') {
-          chartRows[row][timeIndex] = `\x1b[102m\x1b[30m▒\x1b[0m`;
-        } else {
-          chartRows[row][timeIndex] = `${targetData.color}█\x1b[0m`;
-        }
-      }
-    });
-  });
-
-  chartRows.forEach(row => console.log(row.join('   ')));
-  console.log('─'.repeat(latencyData[0].latencies.length * 3));
-
-  latencyData.forEach(targetData => {
-    const coloredValues = targetData.latencies
-      .map(latency => `${targetData.color}${latency}ms\x1b[0m`)
-      .join(' | ');
-    console.log(coloredValues);
-  });
-
-  console.log('\nTarget Legend and Average Latency:');
-  latencyData.forEach(targetData => {
-    const averageLatency =
-      targetData.latencies.reduce((a, b) => a + b, 0) / targetData.latencies.length || 0;
-    console.log(
-      `${targetData.color}█\x1b[0m ${targetData.title}: Average Latency = ${averageLatency.toFixed(
-        2
-      )} ms`
+    console.clear();
+    console.log('Latency Chart:');
+  
+    const maxValue = Math.max(
+      ...latencyData
+        .filter((data) => data.color !== '\x1b[32m') // Filter out green data
+        .flatMap((data) => data.latencies)
     );
-  });
+    const scale = maxValue / maxHeight;
+  
+    const chartRows = Array.from({ length: maxHeight }, () =>
+      Array(latencyData[0].latencies.length).fill(' ')
+    );
+  
+    latencyData
+      .filter((targetData) => targetData.color !== '\x1b[32m') // Skip green bars
+      .forEach((targetData) => {
+        targetData.latencies.forEach((latency, timeIndex) => {
+          const scaledValue = Math.round(latency / scale);
+          for (let i = 0; i < scaledValue; i++) {
+            const row = maxHeight - i - 1;
+            chartRows[row][timeIndex] = `${targetData.color}█\x1b[0m`;
+          }
+        });
+      });
+  
+    chartRows.forEach((row) => console.log(row.join('   ')));
+    console.log('─'.repeat(latencyData[0].latencies.length * 3));
+  
+    latencyData
+      .filter((targetData) => targetData.color !== '\x1b[32m') // Skip green values in display
+      .forEach((targetData) => {
+        const coloredValues = targetData.latencies
+          .map((latency) => `${targetData.color}${latency}ms\x1b[0m`)
+          .join(' | ');
+        console.log(coloredValues);
+      });
+  
+    console.log('\nTarget Legend and Average Latency:');
+    latencyData
+      .filter((targetData) => targetData.color !== '\x1b[32m') // Skip green legend
+      .forEach((targetData) => {
+        const latencies = targetData.latencies.filter((latency) => latency > 0); // Exclude 0 ms
+        const averageLatency =
+          latencies.reduce((a, b) => a + b, 0) / latencies.length || 0;
+        const highestLatency = Math.max(...latencies);
+        const lowestLatency = latencies.length > 0 ? Math.min(...latencies) : 'N/A';
+  
+        console.log(
+          `${targetData.color}█\x1b[0m ${targetData.title}: Average Latency = ${averageLatency.toFixed(
+            2
+          )} ms | Highest = ${highestLatency} ms | Lowest = ${lowestLatency} ms`
+        );
+      });
+  
+    // Add progress bar
+    const progressBarWidth = 50;
+    const progressBlocks = Math.round((progress / 100) * progressBarWidth);
+    const progressBar = `[${'█'.repeat(progressBlocks)}${' '.repeat(
+      progressBarWidth - progressBlocks
+    )}] ${progress.toFixed(2)}%`;
+    console.log('\nProgress:');
+    console.log(progressBar);
+  
+    console.log('\nPress Enter to stop');
+  }
 
-  console.log(
-    '\x1b[102m\x1b[30m▒\x1b[0m Latency values that are close or nearly identical.'
-  );
 
-  // Add progress bar
-  const progressBarWidth = 50;
-  const progressBlocks = Math.round((progress / 100) * progressBarWidth);
-  const progressBar = `[${'█'.repeat(progressBlocks)}${' '.repeat(
-    progressBarWidth - progressBlocks
-  )}] ${progress.toFixed(2)}%`;
-  console.log('\nProgress:');
-  console.log(progressBar);
-
-  console.log('\nPress Enter to stop');
-}
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -120,8 +129,8 @@ async function testLatencyForTarget(target, latencies) {
   const latency = end - start;
   latencies.push(latency);
 
-  // Ensure we only keep the last 20 latency values
-  if (latencies.length > 20) {
+  // Ensure we only keep the last 30 latency values
+  if (latencies.length > 30) {
     latencies.shift();
   }
 

@@ -1,19 +1,15 @@
 {
     "targets": [
+
+        {
+        "title": "Azure VM SG",
+        "serverIp": "52.163.98.156",
+        "color": "blue"
+      },
       {
         "title": "AWS VM TH",
-        "serverIp": "43.208.190.238",
-        "color": "magenta"
-      },
-        {
-        "title": "AWS VM SG",
-        "serverIp": "52.221.238.113",
+        "serverIp": "43.208.13.109",
         "color": "orange"
-      },
-        {
-            "title": "Azure VM SG",
-            "serverIp": "52.163.98.156",
-            "color": "blue"
-        }
+      }
     ]
   }
