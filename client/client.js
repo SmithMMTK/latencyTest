@@ -40,40 +40,34 @@ const colorMap = {
   gray: '\x1b[90m',         // Gray for shadow/overlap
 };
 
-function drawLatencyChart(latencyData, maxHeight = 12) {
+function drawLatencyChart(latencyData, maxHeight = 12, progress = 0) {
   console.clear();
   console.log('Latency Chart:');
 
-  // Find the max latency across all targets for scaling
   const maxValue = Math.max(...latencyData.flatMap(data => data.latencies));
-  const scale = maxValue / maxHeight; // Scale latency values to fit the maxHeight
+  const scale = maxValue / maxHeight;
 
-  // Generate chart rows (height-based)
   const chartRows = Array.from({ length: maxHeight }, () =>
     Array(latencyData[0].latencies.length).fill(' ')
-  ); // Fixed width of 30 (time points)
+  );
 
   latencyData.forEach((targetData, targetIndex) => {
     targetData.latencies.forEach((latency, timeIndex) => {
       const scaledValue = Math.round(latency / scale);
-
       for (let i = 0; i < scaledValue; i++) {
-        const row = maxHeight - i - 1; // Invert to match chart Y-axis
+        const row = maxHeight - i - 1;
         if (chartRows[row][timeIndex] !== ' ') {
-          // If there is already a block, use green with black dot
-          chartRows[row][timeIndex] = `\x1b[102m\x1b[30m▒\x1b[0m`; // Green block with black dots
+          chartRows[row][timeIndex] = `\x1b[102m\x1b[30m▒\x1b[0m`;
         } else {
-          chartRows[row][timeIndex] = `${targetData.color}█\x1b[0m`; // Default color block
+          chartRows[row][timeIndex] = `${targetData.color}█\x1b[0m`;
         }
       }
     });
   });
 
-  // Print the chart
-  chartRows.forEach(row => console.log(row.join('   '))); // Add spacing between columns
-  console.log('─'.repeat(latencyData[0].latencies.length * 3)); // X-axis
+  chartRows.forEach(row => console.log(row.join('   ')));
+  console.log('─'.repeat(latencyData[0].latencies.length * 3));
 
-  // Print latency values below the chart, separated by target
   latencyData.forEach(targetData => {
     const coloredValues = targetData.latencies
       .map(latency => `${targetData.color}${latency}ms\x1b[0m`)
@@ -81,7 +75,6 @@ function drawLatencyChart(latencyData, maxHeight = 12) {
     console.log(coloredValues);
   });
 
-  // Print labels and average latencies with color blocks
   console.log('\nTarget Legend and Average Latency:');
   latencyData.forEach(targetData => {
     const averageLatency =
@@ -93,12 +86,20 @@ function drawLatencyChart(latencyData, maxHeight = 12) {
     );
   });
 
-  // Explain the green block with black dot
   console.log(
     '\x1b[102m\x1b[30m▒\x1b[0m Latency values that are close or nearly identical.'
   );
 
-  console.log('Press Enter to stop');
+  // Add progress bar
+  const progressBarWidth = 50;
+  const progressBlocks = Math.round((progress / 100) * progressBarWidth);
+  const progressBar = `[${'█'.repeat(progressBlocks)}${' '.repeat(
+    progressBarWidth - progressBlocks
+  )}] ${progress.toFixed(2)}%`;
+  console.log('\nProgress:');
+  console.log(progressBar);
+
+  console.log('\nPress Enter to stop');
 }
 
 function sleep(ms) {
@@ -140,21 +141,30 @@ async function runLatencyTests() {
     keepRunning = false;
   });
 
-  // Initialize latency data for each target
   const latencyData = targets.map(target => ({
     title: target.title,
-    color: colorMap[target.color?.toLowerCase()] || '\x1b[32m', // Default green
+    color: colorMap[target.color?.toLowerCase()] || '\x1b[32m',
     latencies: [],
   }));
 
+  let iteration = 0;
+  const totalIterations = 100; // Define the total iterations for progress tracking
+
   while (keepRunning) {
+    iteration++;
     for (let i = 0; i < targets.length; i++) {
       const target = targets[i];
       await testLatencyForTarget(target, latencyData[i].latencies);
     }
 
-    drawLatencyChart(latencyData, 10);
-    await sleep(1000); // Delay between tests
+    const progress = (iteration / totalIterations) * 100;
+    drawLatencyChart(latencyData, 10, progress);
+
+    if (iteration >= totalIterations) {
+      keepRunning = false;
+    }
+
+    await sleep(1000);
   }
 
   rl.close();
