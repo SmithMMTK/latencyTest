@@ -100,6 +100,12 @@ async function testLatency() {
 
     const averageLatency = latencies.reduce((a, b) => a + b, 0) / latencies.length;
 
+    
+    // Ensure we only keep the last 30 latency values
+    if (latencies.length > 30) {
+      latencies.shift();
+    }
+
     // Redraw chart
     console.clear();
     console.log(`Title: ${title}`);
