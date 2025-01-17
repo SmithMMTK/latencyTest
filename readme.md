@@ -18,7 +18,7 @@ npm install
 node server.js
 ```
 
-# How to run client test
+# How to run latency test
 Modify parameter file parameters.json or create new file
 
 parameter format
@@ -61,7 +61,7 @@ const colorMap = {
 
 ### Execution
 ```bash
-node client.js -p parameters.json
+node latencyTest.js
 ```
 
 >Remark: if not -p specific client.js will load parameters from parameter.json
@@ -69,7 +69,7 @@ node client.js -p parameters.json
 
 ---
 
-# How to run client and download speed test (single target)
+# How to run download speed test (single target)
 
 Modify parameter file parameter.json or create new file
 
@@ -102,7 +102,7 @@ const colorMap = {
 
 ### Execution
 ```bash
-node download_test.js -p parameters.json
+node download_test.js
 ```
 
 >Remark: if not -p specific client.js will load parameters from parameter.json
