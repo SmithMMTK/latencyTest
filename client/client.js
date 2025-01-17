@@ -44,8 +44,7 @@ function drawLatencyChart(latencyData, maxHeight = 12, progress = 0) {
   console.clear();
   console.log('Latency Chart:');
 
-  const maxValue = Math.max(...latencyData.flatMap(data => data.latencies));
-  const scale = maxValue / maxHeight;
+  const scale = 10; // Set 1 block to represent 10ms
 
   const chartRows = Array.from({ length: maxHeight }, () =>
     Array(latencyData[0].latencies.length).fill(' ')
