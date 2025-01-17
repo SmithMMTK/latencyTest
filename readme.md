@@ -18,7 +18,7 @@ npm install
 node server.js
 ```
 
-# How to run latency test
+# How to run client test
 Modify parameter file parameters.json or create new file
 
 parameter format
@@ -69,7 +69,7 @@ node client.js -p parameters.json
 
 ---
 
-# How to run latency and download speed test
+# How to run client and download speed test (single target)
 
 Modify parameter file parameter.json or create new file
 
