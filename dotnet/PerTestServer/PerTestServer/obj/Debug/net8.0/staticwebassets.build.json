@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "MY5h0vzzHO6akRH47DRCbq5c3RxhkJW21x0iwFRXBR4=",
+  "Source": "PerTestServer",
+  "BasePath": "_content/PerTestServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
