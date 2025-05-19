@@ -2,13 +2,13 @@
     "targets": [
 
         {
-        "title": "Azure VM SG",
-        "serverIp": "52.163.98.156",
+        "title": "Azure VM Indo",
+        "serverIp": "70.153.147.95",
         "color": "blue"
       },
       {
-        "title": "AWS VM TH",
-        "serverIp": "43.208.240.206",
+        "title": "AWS VM Indo",
+        "serverIp": "70.153.147.95",
         "color": "orange"
       }
     ]
